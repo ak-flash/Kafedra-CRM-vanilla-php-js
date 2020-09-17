@@ -1,0 +1,6 @@
+*.rar
+*.zip
+vendor
+.idea
+app/config/database.php
+app/objects/test.php

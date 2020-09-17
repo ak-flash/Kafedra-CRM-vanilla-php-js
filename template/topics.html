@@ -1,0 +1,254 @@
+ 
+<script>
+    toastr.options = {
+      "closeButton": false,
+      "progressBar": true
+    }
+
+
+loadFaculty(1);
+
+function loadFaculty(){
+  $("#course").html('');
+  $("#topics_table").html('');
+  $.getJSON('app/objects/faculty.php?p=list', function(data) {
+      $('#faculty').empty();
+      $('#faculty').append('<option value="">Выберите...</option>');
+      $.each(data, function(key, val) {
+                      $('#faculty').append('<option value="' + key + '">' + val + '</option>');
+                  });
+  });
+}
+
+function loadTopicId(id){
+  $.getJSON('app/objects/topics.php?token='+$('#token').val()+'&id='+id, function(data) {
+                $("#topic_id").val(data['topics'].id);
+                $("#t_name").val(data['topics'].t_name);
+                $("#t_number").val(data['topics'].t_number).change();
+                $('#detailsModalLabel').html('Редактировать тему №<b>'+data['topics'].t_number+'</b>');
+                $('#action').val('update');
+                $('#detailsModal').modal();
+  });
+}
+
+function loadTopicsList(faculty, semester){
+  if(faculty!=""){
+  $('#btn_add').prop({'disabled' : false});
+  $('#btn_refresh').prop({'disabled' : false});
+  $("#course").html('');
+
+  $.ajax({
+        type: "GET",
+        url: "app/objects/topics.php?p=getall&faculty="+faculty+"&semester="+$('#semester').val(),
+        dataType: 'json',
+        success: function(data) {
+
+          let topic_array = data['topics'];
+          let response="";
+            for(let topic in data['topics']){
+
+                    response += "<tr>"+
+                "<td class='text-center'><a href='#' onclick='loadTopicId("+topic_array[topic].id+");'>"+topic_array[topic].t_number+"</a></td>"+
+                "<td>"+topic_array[topic].t_name+"</td>"+
+                "<td class='text-center'>"+topic_array[topic].t_tag+"</td>"+
+                "<td class='text-center'><a href='#' onclick='loadTopicId("+topic_array[topic].id+");'><i class='fas fa-wrench'></i></a></td>"+
+                "</tr>";
+
+
+            }
+            $("#topics_table").html(response);
+            $("#course").html(data['c_name']);
+            $("#course_id").val(data['course_id']);
+        }
+    });
+} else {
+  toastr.error('Выберите факультет!');
+  $('#btn_add').prop({'disabled' : true});
+  $('#btn_refresh').prop({'disabled' : true});
+}
+}
+
+function resetTopicForm(){
+    $('#save_topic')[0].reset();
+    $('#t_id').val(0);
+}
+
+$(function() {
+  $("form").submit(function(event) {
+  event.preventDefault();
+  var data = $('form').serializeArray();
+  
+  $('#btn_save').prop({'disabled' : true});
+
+  $.ajax({
+        type: "POST",
+        url: "app/objects/topic_edit.php?token="+$('#token').val()+"&action="+$('#action').val(),
+        dataType: 'json',
+            data: data,
+            error: function (result) {
+              toastr.error(result.responseText);
+            },
+            success: function (result) { 
+              $('#btn_save').prop({'disabled' : false});
+              
+              if (result['status'] == true) {
+                    loadTopicsList($('#faculty').val(), $('#semester').val());
+                    $('#detailsModal').modal('hide');
+                    
+                    resetTopicForm();
+                    toastr.success(result['message']);
+                }
+                else {
+                  toastr.error(result['message']);
+
+                    }
+            }
+    
+    }); 
+  
+    }); 
+ 
+  }); 
+
+
+</script>
+
+
+<!-- Main content -->
+      <section class="content mt-2">
+  
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <!-- Default box -->
+              <div class="card">
+                <div class="card-header bg-light">
+                  <h4 class="d-inline pl-3 font-weight-bold">Редактирование тем занятий</h4>
+  
+                  <div class="card-tools float-right">
+                      <labels>Семестр:&nbsp;&nbsp;</label>
+                      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                              <label class="btn btn-primary btn-sm active">
+                                <input type="radio" name="options" id="semester1" onchange="loadFaculty(1);$('#semester').val(1);" autocomplete="off" checked value="1"> осенний
+                              </label>
+                              <label class="btn btn-primary btn-sm">
+                                <input type="radio" name="options" id="semester2" onchange="loadFaculty(2);$('#semester').val(2);" autocomplete="off" value="2"> весенний
+                              </label>
+                          </div>
+
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fas fa-minus"></i></button>
+                 
+                </div>
+                </div>
+                <div class="card-body">
+                 
+                  <div class="row">
+
+                            <div class="col-12">
+                             
+                                <div class="form-group d-inline">
+                                    <label for="faculty" class="pr-2">Факультет</label>
+                                    <select class="custom-select" name="faculty" id="faculty" onchange="loadTopicsList($(this).val(), $('#semester').val());" style="width: 130px;">
+                       
+                                    </select>
+
+                                    <div class="d-inline pl-2 ">Дисциплина:
+                                    <div id="course" class="d-inline text-bold"></div>
+                                    </div>
+
+                                    <div class="float-right">
+                                  <button type="button" class="btn btn-success" id="btn_add" onclick="$('#action').val('create');$('#detailsModalLabel').html('Добавить тему занятия');$('#detailsModal').modal();" disabled>Добавить тему</button>&nbsp;&nbsp;&nbsp;
+                                  &nbsp;&nbsp;&nbsp;<button type="button" id="btn_refresh" class="btn btn-info" onclick="loadTopicsList($('#faculty').val(), $('#semester').val());" disabled><i class="fas fa-spinner"></i> Обновить</button>
+                                </div>
+                              </div>  </div>
+                  </div>
+
+
+
+                  
+
+
+                </div>
+                <!-- /.card-body -->
+              
+                <!-- /.card-footer-->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="p-3">
+      <table class="table table-bordered table-hover">
+          <thead>
+          <tr class="table-secondary">
+            <th scope="col" class="text-center">№</th>
+            <th scope="col">Тема</th>
+            <th scope="col" class="text-center">Тэги</b></th>
+            <th scope="col"></th>
+          </tr>
+          </thead>
+          <tbody id="topics_table">
+          </tbody>
+          <tfoot>
+       
+         
+          </tfoot>
+        </table>
+      </div>
+
+
+      <form id="save_topic" action="#" method="POST">
+          <input type="hidden" class="form-control" name="semester" id="semester" value="1">
+
+          <div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header table-secondary">
+                    <h5 class="modal-title" id="detailsModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"  onclick="resetTopicForm()">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body" id="checker_result_modal">
+                          
+                      
+                      <input type="hidden" class="form-control" name="topic_id" id="topic_id" value="0">
+                      <input type="hidden" class="form-control" name="course_id" id="course_id" value="0">
+                      <input type="hidden" class="form-control" name="action" id="action" value="0">
+
+        <div class="row p-2">
+          <div class="col-2 font-bold">Номер:</div>
+          <div class="col">
+            <select class="custom-select" name="t_number" id="t_number" style="width: 80px;" required>
+            <option value="">...</option>
+            <?php for($i=1;$i<20;$i++) echo '<option value="'.$i.'">'.$i.'</option>'; ?>
+            </select>
+          </div>
+        </div> 
+      
+        <div class="row p-2">
+          <div class="col-2 font-bold">Тема:</div>
+          <div class="col">
+            <textarea class="form-control" name="t_name" id="t_name" value="" rows="2" required></textarea>
+          </div>
+        </div>
+ 
+
+                  
+       
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btn_save">Сохранить</button>
+                    &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="resetTopicForm()">Закрыть</button>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+</form>
