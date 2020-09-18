@@ -11,9 +11,9 @@
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
   <!-- Select2 -->
-  <link rel="stylesheet" href="assert/css/select2.min.css">
+  <link rel="stylesheet" href="assets/css/select2.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="assert/css/adminlte.min.css">
+  <link rel="stylesheet" href="assets/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- Toastr -->
@@ -28,12 +28,13 @@
   <!-- overlayScrollbars -->
   <script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
   <!-- Select2 -->
-  <script src="assert/js/select2.min.js"></script>
+  <script src="plugins/select2.min.js"></script>
   <!-- AdminLTE App -->
-  <script src="assert/js/adminlte.min.js"></script>
+  <script src="assets/js/adminlte.min.js"></script>
   <!-- Toastr -->
   <script src="plugins/toastr/toastr.min.js"></script>
-
+  <!-- App script -->
+  <script src="assets/js/app.js"></script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
@@ -95,13 +96,13 @@
       <!-- Профиль пользователя -->
     <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-          <img src="assert/img/avatar5.png" class="user-image img-circle elevation-2" alt="User Image">
-          <span class="d-none d-md-inline">&nbsp;&nbsp;&nbsp;<?php echo $_SESSION['user_surname'].' '.$_SESSION['user_shortname'];?></span>
+          <img src="assets/img/avatar5.png" class="user-image img-circle elevation-2" alt="User Image">
+          <span class="d-none d-md-inline">&nbsp;&nbsp;&nbsp;<?php echo $_SESSION['user_lastname'].' '.$_SESSION['user_firstname'];?></span>
         </a>
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <!-- User image -->
           <li class="user-header bg-secondary">
-            <img src="assert/img/avatar5.png" class="img-circle elevation-2" alt="User Image">
+            <img src="assets/img/avatar5.png" class="img-circle elevation-2" alt="User Image">
 
             <p>
               Доцент - 1 ставка
@@ -133,7 +134,7 @@
     <div class="sidebar">
       <!-- Brand Logo -->
 <a href="index.php" class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <img src="assert/logo.png"
+      <img src="assets/logo-m.png"
            class="ml-3 brand-image img-circle elevation-3"
            style="opacity: .7; width:45px;">
       <h4 class="brand-text pt-2 ml-3 success">ВолгГМУ</h4>

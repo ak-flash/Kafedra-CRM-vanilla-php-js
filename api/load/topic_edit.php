@@ -26,18 +26,19 @@ if(isset($_GET['action'])&&@$_GET['action']=='update'&&@$_POST['topic_id']!=0){
     
 // 
 if($topic->update((int)$_POST['topic_id'])){
-    $topic_arr=array(
-        "status" => true,
-        "message" => "Успешно обновлено!"
-    );
+    $status = true;
+    $error_message = "Успешно обновлено!";
+} else {
+    $status = false;
+    $error_message = "Ошибка! Возможно тема с таким номером уже есть";
 }
-else{
-    $topic_arr=array(
-        "status" => false,
-        "message" => "Ошибка! Возможно тема с таким номером уже есть"
-    );
-}
-print_r(json_encode($topic_arr));
+
+$topic_message=array(
+    "status" => $status,
+    "message" => $error_message,
+);
+
+print_r(json_encode($topic_message));
 
  }
  

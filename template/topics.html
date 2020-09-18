@@ -11,7 +11,7 @@ loadFaculty(1);
 function loadFaculty(){
   $("#course").html('');
   $("#topics_table").html('');
-  $.getJSON('app/objects/faculty.php?p=list', function(data) {
+  $.getJSON('api/faculties.php?action=list', function(data) {
       $('#faculty').empty();
       $('#faculty').append('<option value="">Выберите...</option>');
       $.each(data, function(key, val) {
@@ -21,7 +21,7 @@ function loadFaculty(){
 }
 
 function loadTopicId(id){
-  $.getJSON('app/objects/topics.php?token='+$('#token').val()+'&id='+id, function(data) {
+  $.getJSON('api/topics.php?action=show&id='+id+'&token='+$('#token').val(), function(data) {
                 $("#topic_id").val(data['topics'].id);
                 $("#t_name").val(data['topics'].t_name);
                 $("#t_number").val(data['topics'].t_number).change();
@@ -39,7 +39,7 @@ function loadTopicsList(faculty, semester){
 
   $.ajax({
         type: "GET",
-        url: "app/objects/topics.php?p=getall&faculty="+faculty+"&semester="+$('#semester').val(),
+        url: "api/topics.php?action=list&faculty="+faculty+"&semester="+$('#semester').val(),
         dataType: 'json',
         success: function(data) {
 
@@ -82,7 +82,7 @@ $(function() {
 
   $.ajax({
         type: "POST",
-        url: "app/objects/topic_edit.php?token="+$('#token').val()+"&action="+$('#action').val(),
+        url: "api/topics.php?action="+$('#action').val()+'&token='+$('#token').val(),
         dataType: 'json',
             data: data,
             error: function (result) {

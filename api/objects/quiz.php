@@ -1,5 +1,6 @@
 <?php
-class Quiz{
+
+class Quiz {
  
     // database connection and table name
     private $conn;
