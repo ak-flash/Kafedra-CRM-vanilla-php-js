@@ -1,10 +1,9 @@
 <?php
-session_start();
+$views_dir = 'app/views/';
+$views_name = 'index';
 
-if (!isset($_SESSION['user_id'])) {
-      header('Location: login.php');
-      exit;
-}
+include_once 'app/config/core.php';
+
 
 function getTemplate($file, $template_params = array()) {
 
@@ -18,7 +17,10 @@ function getTemplate($file, $template_params = array()) {
       return $template;
 }
 
-if($_SESSION['user_group']!='laborant'){
+$jwt_response = validate_jwt($views_name);
+
+
+if($jwt_response->status){
 
       if(isset($_GET['page'])) {
             
@@ -26,43 +28,25 @@ if($_SESSION['user_group']!='laborant'){
             $p = strip_tags($p);
             $p = htmlspecialchars($p);
 
-      switch ($p) {
-            case 'test_editor':
-                  $page='template/test_editor.html';
-                  break;
-            case 'test_checker':
-                  $page='template/test_checker.html';
-                  break;
-            case 'test_keys':
-                  $page='template/test_keys.html';
-                  break;
-            case 'classes':
-                  $page='template/classes.html';
-                  break;
-            case 'docs':
-                  $page='template/docs.html';
-                  break;
-            case 'order':
-                  $page='template/order.html';
-                  break;
-            case 'profile':
-                  $page='template/profile.html';
-                  break;
-            case 'topics':
-                  $page='template/topics.html';
-                  break;
-            case 'points':
-                  $page='template/points.html';
-                  break;
-            }
-
-      } else {
-            $page='template/main.html';
-      }
+            $page = $views_dir.$p.'.view.php';
+        
+      } else $page = $views_dir.'main.view.php';
       
-include('api/objects/template.php');
+      if(!file_exists($page)) {
+            // Page not found
+            header('Location: '.$ini_array['APP_CONFIG']['APP_URL'].'/404.html');
+            exit;
+      } else {
+            
+            if($jwt_response->data->group=='admin' || $jwt_response->data->group=='instructor'){
+                  include($views_dir.'layouts/main.view.php');
+            } else {
+                  $page = $views_dir.'test_checker.view.php';
+                  include($views_dir.'layouts/main_laborant.view.php');
+            }
+      }
 
 } else {
-      $page='template/test_checker.html';
-      include('api/objects/template_laborant.php');
-}
+      header('Location: login.php');
+      exit;
+  }

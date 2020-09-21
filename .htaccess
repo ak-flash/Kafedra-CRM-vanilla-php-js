@@ -1,6 +1,6 @@
-#php_value error_reporting E_ALL
-#AddDefaultCharset utf-8
-#AddHandler application/x-httpd-php7 .php .html .htm
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([^\.]+)$ /index.php?page=$1 [NC,L]
+RewriteRule ^api/(.*)/([^/]*)/([0-9]+)$ app/$1.php?action=$2&id=$3 [S]
+RewriteRule ^api/(.*)/([^/]*)$ app/$1.php?action=$2 [S]
+RewriteRule ^api/(.*)$ app/$1.php [S]
+RewriteRule ^([^\.]+)$ /index.php?page=$1 [NC]
