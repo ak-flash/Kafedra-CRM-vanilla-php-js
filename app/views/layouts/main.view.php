@@ -76,7 +76,7 @@
          
           <!-- Menu Footer-->
           <li class="user-footer">
-            <a href="profile&id=<?php echo $jwt_response->data->id;?>" class="btn btn-warning">Профиль</a>
+            <a href="profile" class="btn btn-warning">Профиль</a>
             <a href="api/logout" class="btn btn-danger float-right">Выход</a>
           </li>
     </ul>
