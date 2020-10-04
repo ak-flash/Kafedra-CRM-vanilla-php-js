@@ -45,6 +45,7 @@ function loadQuizKeyVersion(){
   $.post('api/quiz_checkers/load_versions', JSON.stringify(data))
     .done(function(data) {
       $('#version_id').empty();
+      $('#version_id').append('<option value="">...</option>');
 
       $.each(data["key_versions"], function(key, val) {
           $('#version_id').append('<option value="' + val.version + '">' + val.version + '</option>');
@@ -89,43 +90,45 @@ $.post('api/quiz_checkers/load', JSON.stringify(data))
 
 $(function() {
 $("form").submit(function(event) {
+  
+if($('#faculty').val()!="" && $('#version_id').val()!="" && $('#variant_id').val()!="" && $('#topic_id').val()!="") {
   event.preventDefault();
-  var data = $('form').serializeArray();
+  var data = $('form').serializeJSON();
   
   $('#btn_details').prop({'disabled' : false});
 
   $.ajax({
         type: "POST",
-        url: "api/objects/test_checker.php?action=check",
+        url: "api/quiz_checkers/check",
         dataType: 'json',
-            data: data,
+            data: JSON.stringify(data),
             error: function (result) {
-              toastr.error(result.responseText);
+              toastr.error(result.responseJSON['message']);
             },
             success: function (result) { 
-                if (result['status'] == true) {
+                  toastr.success('Результат получен');
                   if(result['result']<60) color="text-danger"; else color="text-success";
-                  $('#checker_result1').html('<b class="'+color+'">'+result['result']+'</b>');
-                  $('#checker_result2').html('<h2 class="d-inline">'+result['result_info']+'</h2> из 10');
-                }
-                else {
-                  
-                  if(result['message']=='Загружено') {
-                    if(result['empty']==0) toastr.error('Внимание! Часть ответов не заполнены'); else toastr.success(result['message']);
-                    $('#btn_check').prop({'disabled' : false});
-                  } else toastr.error(result['message']);
-                  
-                    }
+                  $('#checker_result1').html('<b class="'+color+'">' + result['result']*10 + '</b>');
+                  $('#checker_result2').html('<h2 class="d-inline">'+ result['result'] + '</h2> из 10');
+                
+              
             }
     
     }); 
-    });  
-  }); 
+  } else {
+    toastr.error('Выберите необходимую тему, вариант и версию!');
+ return false;
+  }
+ });
+  
+}); 
 
   function resetCheckForm(){
     $('#btn_details').prop({'disabled' : true});
-    
-    $('#checker_result1').html('');$('#checker_result2').html('');
+    $('#btn_check').prop({'disabled' : true});
+
+    $('#checker_result1').html('');
+    $('#checker_result2').html('');
     $('#q1').val('');$('#q2').val('');$('#q3').val('');$('#q4').val('');$('#q5').val('');
     $('#q6').val('');$('#q7').val('');$('#q8').val('');$('#q9').val('');$('#q10').val('');
   }
@@ -145,9 +148,9 @@ $("form").submit(function(event) {
 </script>
   <form id="send_test_answ" action="#" method="POST">
      
-      <input type="hidden" class="form-control" name="semester" id="semester" value="1">
+      <input type="hidden" name="semester" id="semester" value="1">
       <input type="hidden" name="course_id" id="course_id" value="0">
-      <input type="hidden" class="form-control" name="question_part" id="question_part" value="1">
+      <input type="hidden" name="question_part" id="question_part" value="1">
 
       <!-- Main content -->
       <section class="content mt-2">
@@ -277,7 +280,7 @@ $("form").submit(function(event) {
    </div>
    <div class="col-3">
       <br>
-      <button type="submit" id="btn_check" class="btn btn-primary btn-lg" disabled onclick="$('form').submit();">Проверить</button>
+      <button id="btn_check" class="btn btn-primary btn-lg" disabled onclick="">Проверить</button>
    </div>
    
 </div>
@@ -296,7 +299,7 @@ $("form").submit(function(event) {
         <div class="col-1 text-center"> 
           <label id="ql9">9</label><input size="1" type="number" maxlength="1" onkeypress="mask(this.id, event,'q10')" class="form-control" name="q9" id="q9" min="0" max="4" required></div>
         <div class="col-1 text-center"> 
-          <label id="ql10">10</label><input size="1" type="number" maxlength="1" onkeypress="mask(this.id, event,'submit')" class="form-control" name="q10" id="q10" min="0" max="4" required onchange="$('#btn_check').prop({'disabled' : false})"></div>
+          <label id="ql10">10</label><input size="1" type="number" maxlength="1" onkeypress="mask(this.id, event,'submit'); $('#btn_check').prop({'disabled' : false});" class="form-control" name="q10" id="q10" min="0" max="4" required></div>
         <div class="col-3">
           <br>
         

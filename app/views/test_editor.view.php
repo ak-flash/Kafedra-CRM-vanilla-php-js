@@ -210,13 +210,13 @@ function showTopicsQuestions() {
               </div>               
                  
                  
-              <div class="col ml-5">
+              <div class="col ml-6">
                       
-   
+              
               
               <button type="button" class="btn btn-success mr-3" onclick="$('#action').val('create');$('#detailsModalLabel').html('Добавить вопрос для теста');$('#detailsModal').modal();"><i class="fas fa-plus-square mr-2"></i> Вопрос</button>
                     
-                    
+              <button type="button" id="btn_import" class="btn btn-warning mr-3" onclick="$('#importModal').modal();"><i class="fas fa-upload"></i> </button> 
 
                     <button type="button" id="btn_refresh" class="btn btn-info mr-3" onclick="loadQuiz(1);" ><i class="fas fa-sync"></i> </button>
 
@@ -346,4 +346,37 @@ function showTopicsQuestions() {
                 </div>
               </div>
             </div>
+
+<div id="importModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="importModalLabel">Импортировать вопросы в базу</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                  
+      
+        <div class="row mb-2">
+          <div class="col-3">
+                <b>Файл</b>:
+          </div>
+          <div class="col-9">
+          ссс
+          </div>
+          
+        </div>
+                  
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success mr-2" id="btn_filter_modal" onclick="importQuestions();">Загрузить</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Закрыть</button>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 

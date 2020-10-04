@@ -277,7 +277,7 @@ function printBtn() {
                 <h5 class="d-inline pl-3 font-weight-bold">Редактирование вариантов <small>тестов</small></h5>
                  
                  <div class="float-right">
-                    <button type="button" id="btn_generate" class="btn btn-success mr-4" onclick="generateBtn()" disabled><i class="fas fa-bacon mr-2"></i>Сгенерировать</button>
+                    <button type="button" id="btn_generate" class="btn btn-success mr-4" onclick="generateBtn()" disabled><i class="fas fa-random mr-2"></i>Сгенерировать</button>
                     
                     <button type="button" id="btn_print" class="btn btn-primary mr-4" onclick="printBtn()" disabled><i class="fas fa-print mr-2"></i>Распечатать</button>
 

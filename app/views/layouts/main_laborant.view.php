@@ -98,6 +98,10 @@
 </div>
 <!-- ./wrapper -->
 
-
+<script>
+toastr.options = {
+  "progressBar": true
+}
+</script>
 </body>
 </html>
