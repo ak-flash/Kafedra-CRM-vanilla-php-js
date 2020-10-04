@@ -30,18 +30,21 @@ class Faculty {
             return json_encode($faculty_arr);
         }  
         
-        function courses($faculty = 0, $semester = 0) {
-            $query = "SELECT id, c_name, c_short_name FROM courses WHERE faculty_id = ? AND (semester = ? OR semester = 12)";
+        function courses($semester = 0) {
+            //$query = "SELECT id, c_name, c_short_name FROM courses WHERE (semester = ? OR semester = 12)";
+            
+            
+            $query = "SELECT faculties.id, faculties.short_name, courses.id as course_id, courses.c_name  FROM faculties LEFT JOIN courses ON courses.faculty_id=faculties.id WHERE (semester = ? OR semester = 12)";
+
             // prepare query statement
             $stmt = $this->conn->prepare($query);
             
-            $stmt->bindParam(1, $faculty);
-            $stmt->bindParam(2, $semester);
+            $stmt->bindParam(1, $semester, PDO::PARAM_INT);
             
             // execute query
             $stmt->execute();
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                    $data_arr[$row['id']]=$row['c_name'];
+                    $data_arr[$row['course_id']] = $row['short_name']." - ".$row['c_name'];
                 }
 
             return json_encode($data_arr);

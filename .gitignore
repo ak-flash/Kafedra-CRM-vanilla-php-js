@@ -2,5 +2,6 @@
 *.zip
 vendor
 .idea
-app/config/database.php
+composer.lock
+app/config/config.ini
 app/objects/test.php

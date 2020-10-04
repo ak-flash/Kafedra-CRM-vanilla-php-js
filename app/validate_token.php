@@ -3,12 +3,10 @@ $ini_array = parse_ini_file("config/config.ini", true);
 $jwt_key = $ini_array['JWT_CONFIG']['JWT_KEY'];
 
 // требуется для декодирования JWT
-include_once 'libs/php-jwt-master/src/BeforeValidException.php';
-include_once 'libs/php-jwt-master/src/ExpiredException.php';
-include_once 'libs/php-jwt-master/src/SignatureInvalidException.php';
-include_once 'libs/php-jwt-master/src/JWT.php';
 use \Firebase\JWT\JWT;
- 
+// Load Composer's autoloader
+
+
 // получаем значение веб-токена JSON from POST
 //$data = json_decode(file_get_contents("php://input"));
 // получаем JWT

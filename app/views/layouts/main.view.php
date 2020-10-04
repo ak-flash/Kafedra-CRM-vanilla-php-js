@@ -169,20 +169,66 @@
                 <a href="test_editor" class="nav-link<?php if(@$_GET['page']=='test_editor') echo ' active'; ?>">
                 <i class="fas fa-puzzle-piece nav-icon"></i>
 
-                  <p>Редактировать</p>
+                  <p>Вопросы</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="test_keys" class="nav-link<?php if(@$_GET['page']=='test_keys') echo ' active'; ?>">
                   <i class="fas fa-key nav-icon"></i>
-                  <p>Ответы и варианты</p>
+                  <p>Ответы и печать</p>
                 </a>
               </li>
             </ul>
           </li>
 
-                 
+          <li class="nav-item has-treeview<?php if(substr($_GET['page'],0, 4)=='topi'||substr($_GET['page'],0, 4)=='lect') echo ' menu-open'; ?>">
+              <hr style="background-color: grey;color: grey"><a href="#" class="nav-link">
+              <i class="nav-icon fas fa-book-open"></i>
+              <p>
+              Тематич. планы
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="topics" class="nav-link<?php if(@$_GET['page']=='topics') echo ' active'; ?>">
+                    <i class="nav-icon fas fa-book-open"></i>
+                    <p>Темы занятий</p>
+                  </a>
+              </li>
+                  <li class="nav-item">
+                    <a href="lectures" class="nav-link<?php if(@$_GET['page']=='lectures') echo ' active'; ?>">
+                      <i class="nav-icon fas fa-book-open"></i>
+                      <p>Темы лекций</p>
+                    </a>
+              </li>
+            </ul>
+          </li>      
           
+          <li class="nav-item has-treeview<?php if(substr($_GET['page'],0, 4)=='zoom') echo ' menu-open'; ?>">
+              <hr style="background-color: grey;color: grey">
+                <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-book-open"></i>
+                <p>
+                Лекции в Zoom
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="zoom_report" class="nav-link<?php if(@$_GET['page']=='zoom_report') echo ' active'; ?>">
+                    <i class="nav-icon fas fa-book-open"></i>
+                    <p>Отчёт посещения</p>
+                  </a>
+              </li>
+                  <li class="nav-item">
+                    <a href="zoom_create" class="nav-link<?php if(@$_GET['page']=='zoom_create') echo ' active'; ?>">
+                      <i class="nav-icon fas fa-book-open"></i>
+                      <p>Запланировать</p>
+                    </a>
+              </li>
+            </ul>
+          </li>
          
           <li class="nav-header">Дополнительно</li>
           <li class="nav-item">
@@ -191,18 +237,8 @@
               <p>Документы</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="topics" class="nav-link<?php if(@$_GET['page']=='topics') echo ' active'; ?>">
-              <i class="nav-icon fas fa-book-open"></i>
-              <p>Темы занятий</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="lectures" class="nav-link<?php if(@$_GET['page']=='lectures') echo ' active'; ?>">
-              <i class="nav-icon fas fa-book-open"></i>
-              <p>Темы лекций</p>
-            </a>
-          </li>
+          
+         
           <li class="nav-item">
             <a href="points" class="nav-link<?php if(@$_GET['page']=='points') echo ' active'; ?>">
               <i class="nav-icon fas fa-file"></i>
@@ -211,7 +247,7 @@
           </li>
 
 
-          <li class="nav-item has-treeview">
+         <!-- <li class="nav-item has-treeview">
               <hr style="background-color: grey;color: grey"><a href="#" class="nav-link">
               <i class="nav-icon far fa-envelope"></i>
               <p>
@@ -231,7 +267,7 @@
                   <i class="far fa-circle nav-icon"></i>
                   <p>Исходящие</p>
                 </a>
-              </li>
+              </li> -->
               
             </ul>
           </li>

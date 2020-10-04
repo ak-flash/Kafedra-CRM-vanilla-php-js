@@ -1,24 +1,28 @@
 <?php
 include_once 'config/core.php';
-include_once 'objects/user.php';
+include_once 'objects/auth.php';
 
-// подключение файлов jwt
-include_once 'libs/php-jwt-master/src/BeforeValidException.php';
-include_once 'libs/php-jwt-master/src/ExpiredException.php';
-include_once 'libs/php-jwt-master/src/SignatureInvalidException.php';
-include_once 'libs/php-jwt-master/src/JWT.php';
 use \Firebase\JWT\JWT;
+// Load Composer's autoloader
+require '../vendor/autoload.php';
 
 // получаем соединение с базой данных
 $database = new Database();
 $db = $database->getConnection();
 
-// создание объекта 'User'
-$user = new User($db);
+// создание объекта 
+$user = new Auth($db);
  
 // получаем данные
 $data = json_decode(file_get_contents("php://input"));
- 
+
+if( !empty($data->authcode)) {
+    // set authcode
+    $data->authcode = htmlspecialchars(strip_tags($data->authcode));;
+    setcookie("authcode", $data->authcode, ['expires'=>0, 'path'=>'/', 'domain'=>$ini_array['APP_CONFIG']['APP_URL'], 'httponly'=>true, 'secure'=>true, 'SameSite'=>'Strict']);
+    http_response_code(200);
+    echo json_encode(array("message" => "Код проверки установлен. Необходимо войти заново"));
+} else {
 // устанавливаем значения
 if( !empty($data->email)) {
     $user->email = $data->email;
@@ -30,6 +34,12 @@ if( !empty($data->email)) {
     // существует ли электронная почта и соответствует ли пароль тому, что находится в базе данных
     if ($email_exists && password_verify($data->password, $user->password) ) {
         
+   
+        $user->auth_code = isset($_COOKIE['authcode']) ? $_COOKIE['authcode'] : "";
+        $isAuthcode = $user->check_authcode();
+        
+        if($isAuthcode) {
+
         $nextWeek = time() + (7 * 24 * 60 * 60);
         
         $token = array(
@@ -38,13 +48,13 @@ if( !empty($data->email)) {
         "iat" => time(),
         "exp" => $nextWeek,
         "data" => array(
-            "id" => $user->id,
+            "id" => $user->user_id,
             "firstname" => $user->firstname,
             "secondname" => $user->secondname,
             "lastname" => $user->lastname,
             "group" => $user->group,
             "email" => $user->email,
-            "useragent" => $_SERVER['HTTP_USER_AGENT'],
+            "session_id" => $user->session_id,
         )
         );
     
@@ -62,21 +72,39 @@ if( !empty($data->email)) {
         $jwt = JWT::encode($token, $ini_array['JWT_CONFIG']['JWT_KEY']);
         
         //header("Set-Cookie: jwt=".$jwt."; secure; httpOnly");
-        setcookie("jwt", $jwt,['expires'=>0, 'path'=>'/', 'domain'=>$ini_array['APP_CONFIG']['APP_URL'], 'httponly'=>true, 'secure'=>true]);
+        setcookie("jwt", $jwt,['expires'=>0, 'path'=>'/', 'domain'=>$ini_array['APP_CONFIG']['APP_URL'], 'httponly'=>true, 'secure'=>true, 'SameSite'=>'Strict']);
         
-        echo json_encode(
-            array(
-                "message" => "Успешный вход в систему.",
-                
-            )
-        );
-    
+        
+        
+        $message = "Успешный вход в систему";
+
+        echo json_encode(array( "message" => $message ));
+
+        write_log($user->user_id, $message);
+
+        } else {
+           
+            if($user->send_authcode($user->email, $user->firstname)){
+                http_response_code(401);
+                echo json_encode(array( "status" => "authcode", "message" => "Код отправлен на вашу почту"));
+                write_log($user->user_id, 'Запрос дополнительной проверки');
+            } else {
+                echo json_encode(array( "status" => "error", "message" => "Ошибка дополнительной проверки"));
+                write_log($user->user_id, 'Ошибка дополнительной проверки');
+            }
+           
+            
+        }
     }
     
     // Если электронная почта не существует или пароль не совпадает,
     // сообщим пользователю, что он не может войти в систему
     else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Ошибка входа. Неправильный логин или пароль"));
+        $message = "Ошибка входа. Неправильный логин или пароль";
+        http_response_code(401);
+        echo json_encode(array( "message" => $message ));
+        write_log($user->user_id, $message);
     }
+}
+
 }

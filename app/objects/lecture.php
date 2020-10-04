@@ -45,9 +45,15 @@ class Lecture {
         }
 
         function listshort($semester = 0, $course_id = 0){
-            $query = "SELECT * FROM " . $this->table_name . " WHERE course_id = ".(int) $course_id." AND semester = ".(int)$semester." ORDER BY l_number ASC";
+            
+            $query = "SELECT * FROM ".$this->table_name. 
+                    " WHERE course_id = ? AND semester = ? ORDER BY l_number ASC";
             // prepare query statement
             $stmt = $this->conn->prepare($query);
+            
+            $stmt->bindParam(1, $course_id, PDO::PARAM_INT);
+            $stmt->bindParam(2, $semester, PDO::PARAM_INT);
+            
             // execute query
             $stmt->execute();
     
@@ -56,7 +62,7 @@ class Lecture {
             }
 
             return json_encode($data_arr);
-            }
+        }
 
         // get single data
         function show($id){
@@ -78,9 +84,14 @@ class Lecture {
                 "id" => $row['id'],
                 "l_name" => $row['l_name'],
                 "l_number" => $row['l_number'],
+                "block" => $row['block'],
             );
-            
+                
+                // Set block of edited element
+                $this->conn->query("UPDATE " . $this->table_name . " SET block = 1 WHERE id = ".$this->id);
+                
             return json_encode($data_arr);
+            
         }
 
 
@@ -120,7 +131,7 @@ class Lecture {
             $query = "UPDATE
                         " . $this->table_name . "
                     SET
-                        l_name = :l_name, l_number = :l_number
+                        l_name = :l_name, l_number = :l_number, block = 0
                     WHERE
                         id = :id";
         

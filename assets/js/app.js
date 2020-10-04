@@ -9,16 +9,15 @@ function loadFaculty(){
     });
   }
 
-  function loadCoursesList(faculty, semester) {
+  function loadCoursesList(semester) {
     data = {
-        'faculty':faculty,
         'semester':semester,
     }
     $.post('api/faculties/courses', JSON.stringify(data), function(data) {
-        $('#course').empty();
-        $('#course').append('<option value="">Выберите...</option>');
+        $('#faculty').empty();
+        $('#faculty').append('<option value="">Выберите...</option>');
         $.each(data, function(key, val) {
-                        $('#course').append('<option value="' + key + '">' + val + '</option>');
+                        $('#faculty').append('<option value="' + key + '">' + val + '</option>');
                     });
     });
   }

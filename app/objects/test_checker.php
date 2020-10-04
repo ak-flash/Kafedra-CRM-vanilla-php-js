@@ -1,6 +1,6 @@
 <?php
 
-class Test_checker{
+class Test_checker {
         
         // database connection and table name
         private $conn;

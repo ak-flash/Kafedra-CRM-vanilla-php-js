@@ -1,4 +1,7 @@
 <?php
+set_include_path( get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'] );
+require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+
 $ini_array = parse_ini_file("config.ini", true);
 // заголовки
 if(isset($views_name) && $views_name=='index'){
@@ -6,7 +9,7 @@ if(isset($views_name) && $views_name=='index'){
 } else {
     header("Access-Control-Allow-Origin: https://".$ini_array['APP_CONFIG']['APP_URL']);
     header("Content-Type: application/json; charset=UTF-8");
-    header("Access-Control-Allow-Methods: POST");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
     header("Access-Control-Max-Age: 3600");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 }
@@ -38,5 +41,49 @@ function validate_jwt($index = null) {
         exit;
     }
     if($index=='index') $path = 'app/'; else $path = '';
-    return json_decode(include($path."validate_token.php"));
+    return json_decode(include("app/validate_token.php"));
+}
+
+
+function write_log($user_id, $text) {
+    $database = new Database();
+    $database->getConnection();
+    
+    $query = "INSERT INTO logs
+                    SET
+                        user_id = :user_id,
+                        ip = :ip,
+                        text = :text";
+    
+    $stmt = $database->conn->prepare($query);
+    // привязываем значения
+    $ip = get_client_ip();
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':text', $text);
+    $stmt->bindParam(':ip', $ip);
+
+    if($stmt->execute()) {
+        return true;
+    }
+    return false;
+}
+
+// Function to get the client IP address
+function get_client_ip() {
+    $ipaddress = '';
+    if (getenv('HTTP_CLIENT_IP'))
+        $ipaddress = getenv('HTTP_CLIENT_IP');
+    else if(getenv('HTTP_X_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+    else if(getenv('HTTP_X_FORWARDED'))
+        $ipaddress = getenv('HTTP_X_FORWARDED');
+    else if(getenv('HTTP_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_FORWARDED_FOR');
+    else if(getenv('HTTP_FORWARDED'))
+       $ipaddress = getenv('HTTP_FORWARDED');
+    else if(getenv('REMOTE_ADDR'))
+        $ipaddress = getenv('REMOTE_ADDR');
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
 }

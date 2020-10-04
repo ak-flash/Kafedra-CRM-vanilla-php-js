@@ -1,6 +1,6 @@
 <script>
 
-loadFaculty(1);
+loadCoursesList(1);
 
 function loadLecturesList(semester, course_id){
   
@@ -32,14 +32,23 @@ function loadLectureId(id){
 
   $.post( "api/lectures/show/"+id)
     .done(function(data) {
-
-        $("#id").val(data.id);
-        $("#l_name").val(data.l_name);
-        $("#l_number").val(data.l_number).change();
-        $('#detailsModalLabel').html('Редактировать тему №<b>'+data.l_number+'</b>');
-        $('#action').val('update');
-        $('#detailsModal').modal();
-        $('#detailsModal').show().scrollTop(0);
+        if(data.status==false) {
+            toastr.error(data.message);
+        } else {
+            $("#id").val(data.id);
+            $("#l_name").val(data.l_name);
+            $("#l_number").val(data.l_number).change();
+            $('#detailsModalLabel').html('Редактировать тему №<b>'+data.l_number+'</b>');
+            $('#action').val('update');
+               
+            //if(data.block==1) {
+            //        $("#notify").html('<small>Объект редактируется другим пользователем!</small>');
+            //    } else {
+            //        $("#notify").html('');
+            //    }
+            
+            $('#detailsModal').modal();
+        }
   });
 }
 
@@ -101,7 +110,7 @@ $(function() {
             <div class="col-12">
               <!-- Default box -->
               <div class="card">
-                <div class="card-header bg-light">
+                <div class="card-header bg-secondary">
                   <h4 class="d-inline pl-3 font-weight-bold">Тематический план <small>лекционных занятий</small></h4>
   
               
@@ -110,10 +119,10 @@ $(function() {
                       <labels>Семестр:&nbsp;&nbsp;</label>
                       <div class="btn-group btn-group-toggle" data-toggle="buttons">
                               <label class="btn btn-primary btn-sm active">
-                                <input type="radio" name="options" id="semester1" onchange="loadFaculty(1);$('#semester').val(1);$('#lectures_table').html('');$('#course').val(0).change();" autocomplete="off" checked value="1"> осенний
+                                <input type="radio" name="options" id="semester1" onchange="loadCoursesList(1);$('#semester').val(1);$('#lectures_table').html('');$('#course').val(0).change();" autocomplete="off" checked value="1"> осенний
                               </label>
                               <label class="btn btn-primary btn-sm">
-                                <input type="radio" name="options" id="semester2" onchange="loadFaculty(2);$('#semester').val(2);$('#lectures_table').html('');$('#course').val(0).change();" autocomplete="off" value="2"> весенний
+                                <input type="radio" name="options" id="semester2" onchange="loadCoursesList(2);$('#semester').val(2);$('#lectures_table').html('');$('#course').val(0).change();" autocomplete="off" value="2"> весенний
                               </label>
                           </div>
 
@@ -129,14 +138,10 @@ $(function() {
                     <div class="col-12">
                       
                       <div class="form-group d-inline">
-                            <label for="faculty" class="pr-2">Факультет</label>
-                              <select class="custom-select" name="faculty" id="faculty" onchange="loadCoursesList($(this).val(), $('#semester').val());" style="width: 130px;">
+                            <label for="faculty" class="pr-2">Дисциплина</label>
+                              <select class="custom-select" name="faculty" id="faculty" onchange="loadLecturesList($('#semester').val(), $(this).val()); $('#course_id').val($(this).val());" style="width: 230px;">
                               </select>
 
-                            <div class="d-inline pl-2">Дисциплина
-                              <select class="custom-select d-inline ml-2" name="course" id="course" onchange="loadLecturesList($('#semester').val(), $(this).val()); $('#course_id').val($(this).val());" style="width: 150px;">
-                              </select>
-                            </div>
 
                             <div class="float-right">
                           
@@ -179,10 +184,10 @@ $(function() {
 
 
 <form id="modal_form" action="#" method="POST">
-          <div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+          <div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true" data-backdrop="static" >
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                  <div class="modal-header table-secondary">
+                  <div class="modal-header">
                     <h5 class="modal-title ml-3 font-weight-bold" id="detailsModalLabel">Modal title</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"  onclick="resetForm()">
                       <span aria-hidden="true">&times;</span>
@@ -202,6 +207,7 @@ $(function() {
             <option value="">...</option>
             <?php for($i=1;$i<20;$i++) echo '<option value="'.$i.'">'.$i.'</option>'; ?>
             </select>
+            <div id="notify" class="text-danger d-inline pl-3"></div>
           </div>
         </div> 
       
@@ -223,23 +229,16 @@ $(function() {
           </div>
 </form>
 
-<div class="modal modal-danger fade" id="modal-danger">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span></button>
-              </div>
-              <div class="modal-body">
-                <h4 class="ml-3">Вы уверены что хотите удалить?</h4>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-danger" onclick="deleteLectureId($('#id').val())">Удалить</button>
-              </div>
-            </div>
-            <!-- /.modal-content -->
-          </div>
-          <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal -->
+<div class="modal modal-danger fade" id="modal-danger" data-backdrop="static" >
+  <div class="modal-dialog">
+    <div class="modal-content"> 
+      <div class="modal-body">
+        <h4 class="ml-3">Вы уверены что хотите удалить?</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-danger" onclick="deleteLectureId($('#id').val())">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>

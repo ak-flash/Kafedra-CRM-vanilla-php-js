@@ -22,5 +22,5 @@ if(isset($_GET['action']) && @$_GET['action'] == 'list')   {
 }
 
 if(isset($_GET['action']) && @$_GET['action'] == 'courses')   {
-    print_r($faculty->courses($faculty->faculty, $faculty->semester));  
+    print_r($faculty->courses($faculty->semester));  
 }

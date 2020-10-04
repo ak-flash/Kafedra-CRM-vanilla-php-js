@@ -52,7 +52,17 @@ class Topic {
         }
 
         function listshort($semester = 0, $course_id = 0){
-            $query = "SELECT * FROM " . $this->table_name . " WHERE course_id = ? AND semester = ? ORDER BY t_number ASC";
+            
+            $data_arr = array();
+            $data_arr["topics"] = array();
+            $c_short_name = "";
+
+            if($semester==0 && $course_id==0) {
+                $query = "SELECT topics.id, t_number, t_name, c_short_name FROM " . $this->table_name . " LEFT JOIN courses ON courses.id=topics.course_id ORDER BY t_number ASC";
+            } else {
+                $query = "SELECT id, t_number, t_name FROM " . $this->table_name . " WHERE course_id = ? AND semester = ? ORDER BY t_number ASC";
+            }
+            
             // prepare query statement
             $stmt = $this->conn->prepare($query);
 
@@ -62,11 +72,21 @@ class Topic {
             $stmt->execute();
     
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)){ 
-                $data_arr[$row['id']]=$row['t_number'].' - '.$row['t_name'];    
+                
+                if(!empty($row['c_short_name'])) $c_short_name = $row['c_short_name'].') №';              
+                
+                $data_item=array(
+                    "id" => $row['id'],
+                    "t_name" => $c_short_name.$row['t_number'].' - '.$row['t_name'],
+                );
+                
+                array_push($data_arr["topics"], $data_item);
             }
-
+                      
             return json_encode($data_arr);
             }
+
+
 
         // get single data
         function show($id){
@@ -88,9 +108,14 @@ class Topic {
                 "id" => $row['id'],
                 "t_name" => $row['t_name'],
                 "t_number" => $row['t_number'],
+                "block" => $row['block'],
             );
             
+                // Set block of edited element
+                $this->conn->query("UPDATE " . $this->table_name . " SET block = 1 WHERE id = ".$this->id);
+                
             return json_encode($data_arr);
+            
         }
 
 
@@ -149,11 +174,8 @@ class Topic {
 
         function isAlreadyExist(){
             
-            $query = "SELECT id
-                FROM
-                    " . $this->table_name . " 
-               WHERE
-               t_number = :t_number AND semester = :semester AND course_id = :course_id";
+            $query = "SELECT id FROM " . $this->table_name . " 
+                        WHERE t_number = :t_number AND semester = :semester AND course_id = :course_id";
 
             // prepare query statement
             $stmt = $this->conn->prepare($query);
