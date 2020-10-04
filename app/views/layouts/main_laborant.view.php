@@ -4,11 +4,10 @@
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-light navbar-white">
+  <nav class="main-header navbar navbar-expand navbar-dark text-white">
     <div class="container">
       <a href="main" class="navbar-brand">
-        <img src="assets/logo.png" alt="ВолгГМУ Logo" class="brand-image img-circle elevation-3"
-             style="opacity: .8">
+        <img src="assets/logo-m.png" alt="ВолгГМУ Logo" class="brand-image img-circle">
         <span class="brand-text font-weight-light">ВолгГМУ</span>
       </a>
 
@@ -58,12 +57,9 @@
 
 <!-- Профиль пользователя -->
 
-          <div class="p-2"><?php echo $jwt_response->data->lastname.' '.$jwt_response->data->firstname;?></div>
+          <div class="p-2 mr-3"><?php echo $jwt_response->data->lastname.' '.$jwt_response->data->firstname;?></div>
 
-        <li class="nav-item">
-          <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i
-              class="fas fa-th-large"></i></a>
-        </li>
+        
       </ul>
      <a href="api/logout" class="btn btn-warning">Выход</a>
     </div>

@@ -304,7 +304,7 @@ if($('#faculty').val()!="" && $('#version_id').val()!="" && $('#variant_id').val
           <br>
         
         <?php
-          if($jwt_response->data->group=='admin' || $jwt_response->data->group=='instructor') {
+          if(!empty($jwt_response) && ($jwt_response->data->group=='admin' || $jwt_response->data->group=='instructor')) {
               echo '<button type="button" data-toggle="modal" id="btn_details" data-target="#detailsModal" class="btn btn-outline-success btn-lg" disabled>Детали</button>';
           }
         ?>

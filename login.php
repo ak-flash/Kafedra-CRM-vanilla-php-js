@@ -5,13 +5,13 @@
 <div class="login-box text-center">
 
 
-    <div class="card col-12">
+    <div class="card col-12 bg-success">
     <div class="card-body login-card-body">
-    <img src="assets/logo.png" class="img-rounded" style="width:90%">
-    <hr>
+    <img src="assets/logo.png" class="img-rounded" style="width:95%">
+    <hr class="bg-success">
   
     
-      <p class="login-box-msg"><b>Авторизация</b></p>
+     
         <form action="#" method="POST">
           <div class="input-group mb-3">
             <select class="custom-select mr-sm-2" id="username" name="email" onchange="clearError()" required>

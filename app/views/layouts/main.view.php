@@ -99,8 +99,8 @@
       <!-- Brand Logo -->
 <a href="main" class="user-panel mt-3 pb-3 mb-3 d-flex">
       <img src="assets/logo-m.png"
-           class="ml-3 brand-image img-circle elevation-3"
-           style="opacity: .7; width:45px;">
+           class="ml-3 brand-image img-circle"
+           style="opacity: .8; width:45px;">
       <h4 class="brand-text pt-2 ml-3 success">ВолгГМУ</h4>
     </a>
     <!-- Sidebar -->
@@ -291,7 +291,7 @@
 
   <footer class="main-footer text-center">
     <div class="float-right d-none d-sm-block">
-      Версия <b>0.5</b>
+      Версия <b>0.8</b>
     </div>
    Кафедра Иммунологии и аллергологии &copy; <?php echo date('Y');?> ВолгГМУ
   </footer>
