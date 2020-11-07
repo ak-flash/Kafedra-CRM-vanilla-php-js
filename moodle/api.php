@@ -4,7 +4,7 @@ require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 DEFINE('MOODLE_URL', 'https://elearning.volgmed.ru');
 
-$moodle_token = '886804c05fb8acf05c7ebaa4740bdf4a';
+$moodle_token = '';
 
 $MoodleRest = new MoodleRest();
 $MoodleRest->setServerAddress(MOODLE_URL."/webservice/rest/server.php");
