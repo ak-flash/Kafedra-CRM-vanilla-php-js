@@ -127,21 +127,38 @@ class Quiz_key{
                 shuffle($quiz_ids);
                 
                 $x = 0;
-                while ($x<count($quiz_ids)) {
-                    $answer_id[] = rand(1, 4);
-                    $question_id[] = $quiz_ids[$x];
-                    $x++;
-                }
                 
-                while ($x<20) {
-                    $answer_id[] = 0;
-                    $question_id[] = 0;
-                    $x++;
+                if(count($quiz_ids)<=20) {
+                    $quiz_count = count($quiz_ids);
+                    
+                    while ($x<$quiz_count) {
+                        $answer_id[] = rand(1, 4);
+                        $question_id[] = $quiz_ids[$x];
+                        $x++;
+                    }
+                    
+                    while ($x<20) {
+                        $answer_id[] = 0;
+                        $question_id[] = 0;
+                        $x++;
+                    }
+
+                } else {
+                    $quiz_count = 20;
+                    
+                    while ($x<$quiz_count) {
+                        $answer_id[] = rand(1, 4);
+                        $question_id[] = $quiz_ids[$x];
+                        $x++;
+                    }
                 }
+
+                
 
                 $tuples[] = "(:topic_id, :version, ".$variant.", :user_id, ".implode(", ",$question_id).", ".implode(", ",$answer_id).")";
 
-                    
+                
+   
                          
                     }
                     
@@ -152,6 +169,7 @@ class Quiz_key{
                         $x++;
                     }
 
+
                     $sql = "INSERT INTO " . $this->table_name . " (topic_id, version, variant, user_id, ".implode(", ",$question_number).", ".implode(", ",$answer_number).") VALUES ".implode(", ",$tuples);
 
 
@@ -161,7 +179,8 @@ class Quiz_key{
                 $stmt->bindParam(':version', $version_id);
                 $stmt->bindParam(':user_id', $this->user_id, PDO::PARAM_INT);
 
-                if($stmt->execute()) return true;
+                if($stmt->execute()) return true; 
+                //else var_dump($stmt->errorInfo());
                 
             }
                 

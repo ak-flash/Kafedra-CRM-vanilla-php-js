@@ -18,7 +18,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 if( !empty($data->authcode)) {
     // set authcode
-    $data->authcode = htmlspecialchars(strip_tags($data->authcode));;
+    $data->authcode = htmlspecialchars(strip_tags($data->authcode));
     setcookie("authcode", $data->authcode, ['expires'=>0, 'path'=>'/', 'domain'=>$ini_array['APP_CONFIG']['APP_URL'], 'httponly'=>true, 'secure'=>true, 'SameSite'=>'Strict']);
     http_response_code(200);
     echo json_encode(array("message" => "Код проверки установлен. Необходимо войти заново"));
