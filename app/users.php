@@ -19,9 +19,10 @@ if(isset($data->firstname)){ $user->firstname = htmlspecialchars(strip_tags($dat
 if(isset($data->secondname)){ $user->secondname = htmlspecialchars(strip_tags($data->secondname)); }
 if(isset($data->lastname)){ $user->lastname = htmlspecialchars(strip_tags($data->lastname)); }
 if(isset($data->email)){  $user->email = htmlspecialchars(strip_tags($data->email)); }
+$user->filter_group = $data->filter_group ?? 0;
 
 if(isset($_GET['action']) && @$_GET['action'] == 'list')   {
-    print_r($user->list()); 
+    print_r($user->list($user->filter_group));
     die();  
 }
 

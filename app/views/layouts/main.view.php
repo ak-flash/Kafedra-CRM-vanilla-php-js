@@ -61,7 +61,7 @@
     <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
           <img src="assets/img/avatar5.png" class="user-image img-circle elevation-2" alt="User Image">
-          <span class="d-none d-md-inline">&nbsp;&nbsp;&nbsp;<?php echo $jwt_response->data->lastname.' '.$jwt_response->data->firstname;?></span>
+          <span class="d-none d-md-inline">&nbsp;&nbsp;&nbsp;<?=$jwt_response->data->lastname.' '.$jwt_response->data->firstname?></span>
         </a>
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <!-- User image -->
@@ -125,29 +125,42 @@
                 <a href="lectures" class="nav-link<?php if(@$_GET['page']=='lectures') echo ' active'; ?>">
                   <i class="fas fa-users nav-icon"></i>
                   Лекции
-                <span class="badge badge-info right">5</span>
+                <span class="badge badge-info right" id="lectures_count">0</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="classes" class="nav-link<?php if(@$_GET['page']=='classes') echo ' active'; ?>">
                   <i class="fas fa-users nav-icon"></i>
                   Занятия
-                <span class="badge badge-info right">2</span>
+                <span class="badge badge-info right" id="classes_count">0</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="order" class="nav-link<?php if(@$_GET['page']=='order') echo ' active'; ?>">
                   <i class="far fa-calendar-alt nav-icon"></i>
                   Табель
-                  <span class="badge badge-success right">32 дн.</span>
+                  <span class="badge badge-success right" id="tabel_days_count">0</span>
                 </a>
               </li>
-            
+
+        <?php if(isAdmin()): ?>
+                <li class="nav-item">
+                    <a href="courses" class="nav-link<?php if(@$_GET['page']=='courses') echo ' active'; ?>">
+                        <i class="fas fa-users nav-icon"></i>
+                        Дисциплины
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="users" class="nav-link<?php if(@$_GET['page']=='users') echo ' active'; ?>">
+                        <i class="fas fa-users nav-icon"></i>
+                        Сотрудники
+                    </a>
+                </li>
+        <?php endif ?>
+
             </ul>
           </li>
-
-
-          
 
 
           <li class="nav-item has-treeview<?php if(substr($_GET['page'],0, 4)=='test') echo ' menu-open'; ?>">
@@ -283,17 +296,17 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    
+
     <?php include($page); ?>
-    <!-- /.content -->
+
   </div>
   <!-- /.content-wrapper -->
 
   <footer class="main-footer text-center">
     <div class="float-right d-none d-sm-block">
-      Версия <b>0.8</b>
+      Версия <b>0.75</b>
     </div>
-   Кафедра Иммунологии и аллергологии &copy; <?php echo date('Y');?> ВолгГМУ
+   Кафедра Иммунологии и аллергологии &copy; <?=date('Y')?> ВолгГМУ
   </footer>
 
   <!-- Боковая панель -->
@@ -309,6 +322,21 @@
 toastr.options = {
   "progressBar": true
 }
+
+
+getClassesCount();
+
+// Get count of days until classes "tabel" report end
+let element = document.getElementById("tabel_days_count");
+
+<?php
+    $origin = date_create("now");
+    $target = date_create(date('Y').'-'.date('m', strtotime("+1 month")).'-09');
+    $interval = date_diff($origin, $target);
+    if($interval->days < 4) echo 'element.classList.remove("badge-success");element.classList.add("badge-danger");';
+    echo "$('#tabel_days_count').html('".$interval->days." дн');";
+?>
+
 </script>
 </body>
 </html>

@@ -19,7 +19,7 @@ function loadTopicsList(semester, course_id){
           for(let topic in data['topics']){
 
                   response += '<tr><td class="text-center"><a href="javascript:;" onclick="loadTopicId('+topic_array[topic].id+');">'+topic_array[topic].t_number+'</a></td>'+
-              '<td>'+topic_array[topic].t_name+'</td>'+
+              '<td class="w-50">'+topic_array[topic].t_name+'</td>'+
               '<td class="text-center">'+topic_array[topic].updated_at+'</td>'+
               '<td class="text-center"><button class="btn btn-info btn-sm" onclick="loadTopicId('+topic_array[topic].id+');"><i class="fas fa-edit"></i> Ред.</button><button class="btn btn-danger btn-sm ml-2" onclick="dialogdeleteTopicId('+topic_array[topic].id+');"><i class="fas fa-remove"></i> Удалить</button></td></tr>';
           }
@@ -110,7 +110,7 @@ $(function() {
               
 
                   <div class="card-tools float-right">
-                      <labels>Семестр:&nbsp;&nbsp;</label>
+                      <label>Семестр:&nbsp;&nbsp;</label>
                       <div class="btn-group btn-group-toggle" data-toggle="buttons">
                               <label class="btn btn-primary btn-sm active">
                                 <input type="radio" name="options" id="semester1" onchange="loadCoursesList(1);$('#semester').val(1);$('#topics_table').html('');$('#course').val(0).change();" autocomplete="off" checked value="1"> осенний
@@ -208,7 +208,7 @@ $(function() {
         <div class="row p-2">
           <div class="col-2 font-bold">Тема:</div>
           <div class="col">
-            <textarea class="form-control" name="t_name" id="t_name" value="" rows="2" required></textarea>
+            <textarea class="form-control" name="t_name" id="t_name" value="" rows="4" required></textarea>
           </div>
         </div>
  

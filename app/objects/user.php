@@ -58,18 +58,23 @@ class User {
         }
 
 
-        function list(){
+        function list($filter_group = 0){
             
             $users_list["users"] = array();
-            
-            $query = "SELECT firstname, secondname, lastname, email FROM " . $this->table_name . " ORDER BY `group` ASC";
+
+            $filter_group_query = '';
+
+            if($filter_group == 'instructors') $filter_group_query = " WHERE `group` IN ('admin', 'instructor') ";
+
+            $query = "SELECT id, firstname, secondname, lastname, email FROM " . $this->table_name . $filter_group_query . " ORDER BY `group` ASC";
             // prepare query statement
             $stmt = $this->conn->prepare($query);
             // execute query
-            $stmt->execute();
+            if(!$stmt->execute()) print_r($stmt->errorInfo());
             
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)){ 
                 $user_item = array(
+                    "id" => $row['id'],
                     "email" => $row['email'],
                     "firstname" => $row['firstname'],
                     "secondname" => $row['secondname'],

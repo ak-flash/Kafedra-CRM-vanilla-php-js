@@ -1,8 +1,11 @@
 <?php
+$ini_array = parse_ini_file("config.ini", true);
+if(empty($_SERVER['DOCUMENT_ROOT'])) $_SERVER['DOCUMENT_ROOT'] = DOCUMENT_ROOT;
+
 set_include_path( get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'] );
+
 require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
-$ini_array = parse_ini_file("config.ini", true);
 // заголовки
 if(isset($views_name) && $views_name=='index'){
     // header for index...
@@ -17,8 +20,10 @@ if(isset($views_name) && $views_name=='index'){
 error_reporting(E_ALL);
 
 // установить часовой пояс по умолчанию
-date_default_timezone_set('Europe/Volgograd');
+date_default_timezone_set('Europe/'.$ini_array['APP_CONFIG']['TIMEZONE']);
 
+DEFINE('MOODLE_URL', $ini_array['APP_CONFIG']['MOODLE_URL']);
+DEFINE('MOODLE_MESSAGES_TIME_OFFSET', $ini_array['APP_CONFIG']['MOODLE_MESSAGES_TIME_OFFSET']);
 
 // SQL base credentals config
 define("DB_HOST", $ini_array['DB_CONFIG']['DB_HOST']);
@@ -28,14 +33,14 @@ define("DB_PASSWORD", $ini_array['DB_CONFIG']['DB_PASSWORD']);
 
 include_once 'database.php';
 
-function send_message($status, $text) {
+function send_message ($status, $text) {
     if($status) http_response_code(200); else http_response_code(400);
     echo json_encode(array("message" => $text));
 }
 
-function validate_jwt($index = null) {
-    if(isset($_COOKIE["jwt"])){ 
-       $jwt = $_COOKIE["jwt"];  
+function validate_jwt ($index = null) {
+    if(isset($_COOKIE["jwt"])){
+        $jwt = $_COOKIE["jwt"];
     } else {
         header('Location: login.php');
         exit;
@@ -45,16 +50,17 @@ function validate_jwt($index = null) {
 }
 
 
-function write_log($user_id, $text) {
+function write_log ($user_id, $text): bool
+{
     $database = new Database();
     $database->getConnection();
-    
+
     $query = "INSERT INTO logs
                     SET
                         user_id = :user_id,
                         ip = :ip,
                         text = :text";
-    
+
     $stmt = $database->conn->prepare($query);
     // привязываем значения
     $ip = get_client_ip();
@@ -69,7 +75,7 @@ function write_log($user_id, $text) {
 }
 
 // Function to get the client IP address
-function get_client_ip() {
+function get_client_ip () {
     $ipaddress = '';
     if (getenv('HTTP_CLIENT_IP'))
         $ipaddress = getenv('HTTP_CLIENT_IP');
@@ -80,10 +86,36 @@ function get_client_ip() {
     else if(getenv('HTTP_FORWARDED_FOR'))
         $ipaddress = getenv('HTTP_FORWARDED_FOR');
     else if(getenv('HTTP_FORWARDED'))
-       $ipaddress = getenv('HTTP_FORWARDED');
+        $ipaddress = getenv('HTTP_FORWARDED');
     else if(getenv('REMOTE_ADDR'))
         $ipaddress = getenv('REMOTE_ADDR');
     else
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
+}
+
+function isAdmin (): bool
+{
+    $jwt_response = validate_jwt('');
+
+    if($jwt_response->data->group=='admin') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getCurrentSemester (): int
+{
+    if(in_array((int)date('m'), [8,9,10,11,12,1])) {
+        $current_semester = 1;
+    } else {
+        $current_semester = 2;
+    }
+
+    return $current_semester;
+}
+
+function makeJsonMessage ($message) {
+    return '{ "time": "'.date('d/m/Y H:i').'", "message": "'.$message.'" }';
 }

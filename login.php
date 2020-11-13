@@ -71,13 +71,7 @@
     <!-- <script src="assets/plugins/fingerprint2.min.js"></script> -->
 <script>
 
-$.getJSON('api/users/list', function(data) {
-  $('#username').empty();
-  $('#username').append('<option value="">Выберите...</option>');
-  $.each(data, function(key, val) {
-    $('#username').append('<option value="' + val.email + '">' + val.lastname + ' ' + val.firstname + ' ' + val.secondname + '</option>');
-  });
-});
+    loadUsersList('login', 'all');
   
 $(function() {
   $("form").submit(function(event) {
